@@ -1,0 +1,9 @@
+{
+  "name": "project-tracker-context",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/project-tracker-context/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project project-tracker-context --web",
+  "targets": {}
+}

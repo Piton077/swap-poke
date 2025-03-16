@@ -14,7 +14,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@swapi-monorepo/fusionados-context": [
+        "libs/fusionados-context/src/index.ts"
+      ],
+      "@swapi-monorepo/project-tracker-context": [
+        "libs/project-tracker-context/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

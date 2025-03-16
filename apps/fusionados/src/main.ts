@@ -1,21 +1,26 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
 
-import { Logger } from '@nestjs/common';
+import serverlessExpress from '@codegenie/serverless-express';
 import { NestFactory } from '@nestjs/core';
+import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app/app.module';
 
-async function bootstrap() {
+let server: Handler;
+
+async function bootstrap(): Promise<Handler> {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3004;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+  app.setGlobalPrefix(`${process.env.API_PREFIX}/${process.env.API_VERSION}`);
+  await app.init();
+
+  const expressApp = app.getHttpAdapter().getInstance();
+  return serverlessExpress({ app: expressApp });
 }
 
-bootstrap();
+export const handler: Handler = async (
+  event: any,
+  context: Context,
+  callback: Callback,
+) => {
+  console.log(event)
+  server = server ?? (await bootstrap());
+  return server(event, context, callback);
+};

@@ -1,0 +1,50 @@
+service: fusionados
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    CHARACTER_TABLE: ${param:characterTable}
+    HTTP_CACHE: ${param:httpCache}
+    API_PREFIX: ${env:API_PREFIX}
+    API_VERSION: ${env:API_VERSION}
+  tracing:
+    lambda: true
+  apiGateway:
+    restApiId: ${param:restApiId}
+    restApiRootResourceId: ${param:restApiRootResourceId}
+    apiKeySourceType: HEADER
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource: "*"
+    - Effect: Allow
+      Action: 
+        - "dynamodb:PutItem"
+      Resource: "${param:characterTable}"
+
+plugins:
+  - serverless-plugin-include-dependencies
+
+functions:
+  fusionados:
+    name: fusionados
+    handler: dist/main.handler
+    timeout: 15
+    memorySize: 256
+    events:
+      - http:
+          path: ""
+          method: get
+          private: true
+
+package:
+  excludeDevDependencies: false
+  patterns:
+    - '!**'    
+    - 'dist/**'   
+    - '!dist'   
+    - '!node_modules/aws-sdk/**'

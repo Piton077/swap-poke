@@ -3,7 +3,8 @@ const { join } = require('path');
 
 module.exports = {
   output: {
-    path: join(__dirname, '../../dist/apps/historial'),
+    path: join(__dirname, '../lambdas/historial/dist'),
+    libraryTarget: 'commonjs2',
   },
   plugins: [
     new NxAppWebpackPlugin({

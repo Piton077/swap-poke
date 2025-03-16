@@ -1,0 +1,32 @@
+service: cache
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+resources:
+  Resources:
+    HttpCache:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: http-cache
+        AttributeDefinitions:
+          - AttributeName: request
+            AttributeType: S
+        KeySchema:
+          - AttributeName: request
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+  Outputs:
+    httpCache:
+      Value:
+        Fn::GetAtt:
+          - HttpCache
+          - Arn
+      Export:
+        Name: httpCache

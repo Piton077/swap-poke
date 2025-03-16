@@ -1,13 +1,13 @@
 # See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # compiled output
+*.rest
 dist
 tmp
 out-tsc
-
 # dependencies
 node_modules
-
+.serverless
 # IDEs and editors
 /.idea
 .project

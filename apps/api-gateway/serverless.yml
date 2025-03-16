@@ -1,0 +1,103 @@
+service: api-gw-softtek
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+resources:
+  Resources:
+    MyApiGW:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: api-gw-softtek
+    MyApiGWApiKey:
+      Type: AWS::ApiGateway::ApiKey
+      DependsOn: MyApiGW
+      Properties:
+        Name: PrivateApikey
+        Enabled: true
+        StageKeys:
+          - RestApiId: !Ref MyApiGW
+            StageName: ${sls:stage}
+    SecureUsagePlan:
+      Type: AWS::ApiGateway::UsagePlan
+      DependsOn: MyApiGWApiKey
+      Properties:
+        ApiStages:
+          - ApiId: !Ref MyApiGW
+            Stage: ${sls:stage}
+        UsagePlanName: SecureUsagePlan
+        Throttle:
+          RateLimit: 5
+          BurstLimit: 10
+        Quota:
+          Limit: 1000
+          Period: DAY
+    SecureUsagePlanKey:
+      DependsOn: SecureUsagePlan
+      Type: AWS::ApiGateway::UsagePlanKey
+      Properties:
+        KeyId: !Ref MyApiGWApiKey
+        KeyType: API_KEY
+        UsagePlanId: !Ref SecureUsagePlan
+    ApiResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        RestApiId: !Ref MyApiGW
+        ParentId: !GetAtt
+          - MyApiGW
+          - RootResourceId
+        PathPart: "${env:API_PREFIX}"
+    VersionResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        RestApiId: !Ref MyApiGW
+        ParentId: !Ref ApiResource
+        PathPart: "${env:API_VERSION}"
+    AlmacenarResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        RestApiId: !Ref MyApiGW
+        ParentId: !Ref VersionResource
+        PathPart: "almacenar"
+    FusionadosResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        RestApiId: !Ref MyApiGW
+        ParentId: !Ref VersionResource
+        PathPart: "fusionados"
+    HistorialResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        RestApiId: !Ref MyApiGW
+        ParentId: !Ref FusionadosResource
+        PathPart: "historial"
+    FusionadosParamResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        RestApiId: !Ref MyApiGW
+        ParentId: !Ref FusionadosResource
+        PathPart: "{name}"
+  Outputs:
+    prefix: 
+      Value: ${}
+    apikey: 
+      Value: !Ref MyApiGWApiKey
+      Export:
+        Name: MyApiGWApiKey
+    apiGatewayRestApiId:
+      Value:
+        Ref: MyApiGW
+      Export:
+        Name: MyApiGateway-restApiId
+    apiHistorialParamResourceVar:
+      Value: !Ref HistorialResource
+      Export:
+        Name: !Sub ${AWS::StackName}-ApiFusionadosResourceVar
+    apiFusionadosParamResourceVar:
+      Value: !Ref FusionadosParamResource
+      Export:
+        Name: !Sub ${AWS::StackName}-ApiFusionadosParamResourceVar
+    apiAlmacenarParamResourceVar:
+      Value: !Ref AlmacenarResource
+      Export:
+        Name: !Sub ${AWS::StackName}-ApiAlmacenarParamResourceVar

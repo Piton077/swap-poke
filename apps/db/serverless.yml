@@ -1,0 +1,49 @@
+service: db
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+resources:
+  Resources:
+    CharacterTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: characters
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    ProjectTrackerTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: project-tracker
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+  Outputs:
+    characterTable:
+      Value:
+        Fn::GetAtt:
+          - CharacterTable
+          - Arn
+      Export:
+        Name: CharacterTable
+    projectTrackerTable:
+      Value: 
+        Fn::GetAtt:
+          - ProjectTrackerTable
+          - Arn
+      Export:
+        Name: ProjectTrackerTable

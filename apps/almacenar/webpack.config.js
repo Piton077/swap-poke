@@ -3,7 +3,8 @@ const { join } = require('path');
 
 module.exports = {
   output: {
-    path: join(__dirname, '../../dist/apps/almacenar'),
+    path: join(__dirname, '../lambdas/almacenar/dist'),
+    libraryTarget: 'commonjs2',
   },
   plugins: [
     new NxAppWebpackPlugin({

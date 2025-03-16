@@ -1,0 +1,41 @@
+
+
+services:
+  api-gw:
+    path: apps/api-gateway/
+  dbs:
+    path: apps/db
+  cache:
+    path: apps/cache
+  post-almacenar:
+    path: apps/lambdas/almacenar
+    params:
+      restApiId: ${api-gw.apiGatewayRestApiId}
+      restApiRootResourceId: ${api-gw.apiAlmacenarParamResourceVar}
+      apikey: ${api-gw.apikey}
+      projectTrackerTable: ${dbs.projectTrackerTable}
+    dependsOn:
+      - api-gw
+      - dbs
+  get-historial:
+    path: apps/lambdas/historial
+    params:
+      restApiId: ${api-gw.apiGatewayRestApiId}
+      restApiRootResourceId: ${api-gw.apiHistorialParamResourceVar}
+      apikey: ${api-gw.apikey}
+      characterTable: ${dbs.characterTable}
+      httpCache: ${cache.httpCache}
+    dependsOn:
+      - api-gw
+      - dbs
+  get-fusionados:
+    path: apps/lambdas/fusionados
+    params:
+      restApiId: ${api-gw.apiGatewayRestApiId}
+      restApiRootResourceId: ${api-gw.apiFusionadosParamResourceVar}
+      apikey: ${api-gw.apikey}
+      characterTable: ${dbs.characterTable}
+      httpCache: ${cache.httpCache}
+    dependsOn:
+      - api-gw
+      - dbs

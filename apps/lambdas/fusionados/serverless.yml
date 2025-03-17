@@ -9,9 +9,10 @@ provider:
     POKEMON_API_URL: ${env:POKEMON_API_URL}
     POKEMON_UPPER_LIMIT: ${env:POKEMON_UPPER_LIMIT}
     SWAPI_API_URL: ${env:SWAPI_API_URL}
-    HTTP_CACHE: ${param:httpCache}
+    CACHE_TABLE: ${param:httpCache}
     API_PREFIX: ${env:API_PREFIX}
     API_VERSION: ${env:API_VERSION}
+    EXPIRY_TIME: ${env:EXPIRY_TIME}
   tracing:
     lambda: true
   apiGateway:
@@ -28,6 +29,11 @@ provider:
       Action: 
         - "dynamodb:PutItem"
       Resource: "${param:characterTable}"
+    - Effect: Allow
+      Action: 
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+      Resource: "${param:httpCache}"
 
 plugins:
   - serverless-plugin-include-dependencies

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { FusionadosContextModule } from '@swapi-monorepo/fusionados-context';
+import { DynamoDBConnectionModule } from '@swapi-monorepo/shared';
+import { AppController } from './app.controller';
 
 @Module({
-  imports: [FusionadosContextModule],
+  imports: [DynamoDBConnectionModule,FusionadosContextModule],
   controllers: [AppController],
 })
 export class AppModule {}

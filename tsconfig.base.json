@@ -20,7 +20,8 @@
       ],
       "@swapi-monorepo/project-tracker-context": [
         "libs/project-tracker-context/src/index.ts"
-      ]
+      ],
+      "@swapi-monorepo/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

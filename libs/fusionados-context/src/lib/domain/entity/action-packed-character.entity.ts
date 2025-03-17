@@ -33,6 +33,9 @@ export class ActionPackedCharacterEntity {
         this._pokemons = pokemons
     }
 
+    get homeworldName(){
+        return this._planet.name
+    }
 
 
 

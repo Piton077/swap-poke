@@ -5,8 +5,14 @@ export class FusionadoModel {
         public eyeColor: string,
         public gender: string,
         public hairColor: string,
+        public height:string,
+        public mass:string,
         public createdAt: string,
         public skinColor: string,
         public pokemons: string[],
-        public planet: string) { }
+        public planet: {
+            name:string
+            climate:string
+        }
+    ) { }
 }

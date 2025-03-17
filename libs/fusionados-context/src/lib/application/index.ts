@@ -1,2 +1,2 @@
-export * from "./use-cases/fetch-character.use-case";
+export * from "./use-cases";
 

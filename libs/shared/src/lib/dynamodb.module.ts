@@ -1,6 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { Global, Module } from "@nestjs/common";
+import * as AWSXRay from 'aws-xray-sdk';
 
 @Global()
 @Module({
@@ -8,7 +9,7 @@ import { Global, Module } from "@nestjs/common";
         {
               provide:'DynamoDBConnection',
               useFactory: ()=>{
-                  return DynamoDBDocumentClient.from(new DynamoDBClient())
+                  return DynamoDBDocumentClient.from(AWSXRay.captureAWSv3Client(new DynamoDBClient()))
               }
           }
     ],

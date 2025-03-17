@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { FusionadosContextModule } from '@swapi-monorepo/fusionados-context';
 
 @Module({
-  imports: [],
+  imports: [FusionadosContextModule],
   controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

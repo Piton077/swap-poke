@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
-  controllers: [],
-  providers: [],
-  exports: [],
+  imports:[ApplicationModule],
+  exports:[ApplicationModule]
 })
 export class FusionadosContextModule {}

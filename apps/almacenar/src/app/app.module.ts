@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ProjectTrackerContextModule } from "@swapi-monorepo/project-tracker-context";
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
-  imports: [],
+  imports: [ProjectTrackerContextModule],
   controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

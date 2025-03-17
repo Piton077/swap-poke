@@ -29,8 +29,8 @@ plugins:
   - serverless-plugin-include-dependencies
 
 functions:
-  almacenar-lambda:
-    name: almacenar-lambda
+  almacenar:
+    name: almacenar
     handler: dist/main.handler
     timeout: 15
     memorySize: 256

@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
-  controllers: [],
+  imports:[ApplicationModule],
   providers: [],
-  exports: [],
+  exports: [ApplicationModule],
 })
 export class ProjectTrackerContextModule {}

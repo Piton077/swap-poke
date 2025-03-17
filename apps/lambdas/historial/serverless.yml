@@ -39,6 +39,11 @@ functions:
           path: ""
           method: get
           private: true
+          authorizer: 
+            type: COGNITO_USER_POOLS
+            authorizerId: ${param:authorizer}
+            scopes: 
+              - openid
 
 
 package:

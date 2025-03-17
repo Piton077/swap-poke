@@ -39,6 +39,60 @@ resources:
         KeyId: !Ref MyApiGWApiKey
         KeyType: API_KEY
         UsagePlanId: !Ref SecureUsagePlan
+    MyUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: MyUserPool
+        AutoVerifiedAttributes:
+          - email
+        MfaConfiguration: OFF
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            RequireUppercase: true
+    MyUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      DependsOn: MyUserPool
+      Properties:
+        ClientName: MyAppClient
+        UserPoolId:
+          Ref: MyUserPool
+        AllowedOAuthFlows:
+          - code
+        AllowedOAuthScopes:
+          - email
+          - openid
+          - profile
+        AllowedOAuthFlowsUserPoolClient: true
+        CallbackURLs:
+          - "http://localhost:3000/callback"
+        LogoutURLs:
+          - "http://localhost:3000/logout"
+        SupportedIdentityProviders:
+          - COGNITO
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+    MyApiGatewayAuthorizer:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: MyCognitoAuthorizer
+        Type: COGNITO_USER_POOLS
+        IdentitySource: 'method.request.header.Authorization'
+        RestApiId:
+          Ref: MyApiGW
+        AuthorizerResultTtlInSeconds: 300
+        ProviderARNs:
+          - Fn::GetAtt: [MyUserPool, Arn]
+    CognitoUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        Domain: softtek-challenge-oauth-v1
+        UserPoolId: 
+          Ref: MyUserPool
     ApiResource:
       Type: AWS::ApiGateway::Resource
       Properties:
@@ -78,8 +132,6 @@ resources:
         ParentId: !Ref FusionadosResource
         PathPart: "{name}"
   Outputs:
-    prefix: 
-      Value: ${}
     apikey: 
       Value: !Ref MyApiGWApiKey
       Export:
@@ -101,3 +153,7 @@ resources:
       Value: !Ref AlmacenarResource
       Export:
         Name: !Sub ${AWS::StackName}-ApiAlmacenarParamResourceVar
+    apiAuthorizerArn:
+      Value: !Ref MyApiGatewayAuthorizer
+      Export:
+        Name: MyApiGatewayAuthorizer

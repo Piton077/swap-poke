@@ -14,6 +14,7 @@ services:
       restApiRootResourceId: ${api-gw.apiAlmacenarParamResourceVar}
       apikey: ${api-gw.apikey}
       projectTrackerTable: ${dbs.projectTrackerTable}
+      authorizer: ${api-gw.apiAuthorizerArn}
     dependsOn:
       - api-gw
       - dbs
@@ -25,6 +26,7 @@ services:
       apikey: ${api-gw.apikey}
       characterTable: ${dbs.characterTable}
       httpCache: ${cache.httpCache}
+      authorizer: ${api-gw.apiAuthorizerArn}
     dependsOn:
       - api-gw
       - dbs
@@ -35,6 +37,7 @@ services:
       restApiRootResourceId: ${api-gw.apiFusionadosParamResourceVar}
       apikey: ${api-gw.apikey}
       characterTable: ${dbs.characterTable}
+      authorizer: ${api-gw.apiAuthorizerArn}
       httpCache: ${cache.httpCache}
     dependsOn:
       - api-gw

@@ -23,6 +23,7 @@ jest.mock("@aws-sdk/lib-dynamodb", () => {
   
 describe('Unit test for project backlog repository',()=>{
     it('create new entry in database',async ()=>{
+        process.env["PROJECT_TRACKER_TABLE"] = "tracker-table"
         const mockDynamoClient = new DynamoDBClient({}) as jest.Mocked<DynamoDBClient>;
         const mockDocClient = DynamoDBDocumentClient.from(mockDynamoClient) as jest.Mocked<DynamoDBDocumentClient>;
         
@@ -40,6 +41,9 @@ describe('Unit test for project backlog repository',()=>{
         await projectBacklogRepository.saveEntry(
             entry
         )
-        expect(mockDocClient.send.mock.calls[0][0].input).toEqual(expected.input)
+        expect(mockDocClient.send.mock.calls[0][0].input).toEqual(getParams)
     })
+    afterAll(()=>{
+      jest.clearAllMocks()
+  })
 })

@@ -18,7 +18,7 @@ export class ProjectBacklogDynamoDB implements ProjectBacklogRepository{
         Item: model
       };
       try {
-        this.logger.debug(`Arranging item to save ${model}`)
+        this.logger.debug(`Arranging item to save ${JSON.stringify(model)}`)
         await this.client.send(new PutCommand(getParams));
       } catch (error) {
         this.logger.error('Error while saving project backlog entry item',error)

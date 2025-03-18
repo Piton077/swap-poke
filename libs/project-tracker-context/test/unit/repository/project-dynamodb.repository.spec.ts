@@ -1,6 +1,6 @@
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { ProjectBacklogEntry } from "@domain/entity/project-backlog-entry.entity";
 import { ProjectBacklogDynamoDB } from "@infrastructure/repository/dynamodb/project-backlog.repository";
 import { ProjectEntryModel } from "@infrastructure/repository/dynamodb/project-entry.model";
@@ -14,8 +14,8 @@ jest.mock("@aws-sdk/lib-dynamodb", () => {
         ...actualLib,
       DynamoDBDocumentClient: {
         from: jest.fn().mockImplementation((client) => ({
-          send: jest.fn(), // Mock send method
-          _client: client, // Keep reference for debugging
+          send: jest.fn(),
+          _client: client,
         })),
       },
     };
@@ -36,7 +36,6 @@ describe('Unit test for project backlog repository',()=>{
                 TableName: process.env["PROJECT_TRACKER_TABLE"],
                 Item: model
         };
-        const expected =  new PutCommand(getParams)
         const projectBacklogRepository = new ProjectBacklogDynamoDB(mockDocClient)
         await projectBacklogRepository.saveEntry(
             entry

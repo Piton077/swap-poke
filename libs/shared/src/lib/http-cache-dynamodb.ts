@@ -27,11 +27,12 @@ export class HttpCacheDynamodb implements HttpCache {
     }
     
     async saveRequest(method: string, endpoint: string,response: any): Promise<string> {
-       const model:RequestModel = {
+      const now = new Date() 
+      const model:RequestModel = {
         endpoint,
         method,
-        timestamp: +new Date(),
-        ttl:Math.floor(+new Date() / 1000) + (+process.env["EXPIRY_TIME"]!),
+        timestamp: +now,
+        ttl:Math.floor(+now / 1000) + (+process.env["EXPIRY_TIME"]!),
         request:`request:${method}:${endpoint}`,
         response
        }
@@ -40,7 +41,7 @@ export class HttpCacheDynamodb implements HttpCache {
         Item: model
       };
       try {
-        this.logger.debug(`Arranging item to save ${model}`)
+        this.logger.debug(`Arranging item to save ${JSON.stringify(model)}`)
         await this.client.send(new PutCommand(getParams));
         return model.request
       } catch (error) {

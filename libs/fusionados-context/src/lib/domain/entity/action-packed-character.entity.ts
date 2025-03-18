@@ -2,7 +2,7 @@ import { PlanetVO } from "../vo/planet.vo"
 import { PokemonVO } from "../vo/pokemon.vo"
 
 export class ActionPackedCharacterEntity {
-
+    private readonly slot = +process.env["POKEMON_UPPER_LIMIT"]!
     constructor(
         private _name: string,
         private _birthYear: string,
@@ -30,7 +30,7 @@ export class ActionPackedCharacterEntity {
     get planet() {return this._planet}
 
     setPokemons(pokemons: PokemonVO[]) {
-        this._pokemons = pokemons
+        this._pokemons = (pokemons.length > this.slot) ? pokemons.slice(0,this.slot) : pokemons
     }
 
     get homeworldName(){

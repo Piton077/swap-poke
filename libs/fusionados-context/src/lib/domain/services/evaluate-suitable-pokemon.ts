@@ -24,7 +24,6 @@ const pairingPokemonTypePlanetDictionary:{[key:string]:string[]} = {
 export class EvaluateSuitablePokemonService {
     getSuitablePokemonType(planet: PlanetVO){
         const pokemonType = pairingPokemonTypePlanetDictionary[planet.climate] 
-        if(!pokemonType) throw new Error('No pokemon type matches')
-        return pokemonType
+        return pokemonType ?? []
     }
 }

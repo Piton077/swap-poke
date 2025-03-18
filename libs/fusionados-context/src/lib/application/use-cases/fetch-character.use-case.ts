@@ -31,15 +31,19 @@ export class FetchCharacterUseCase {
   async execute(name:string):Promise<Response>{
     const character = await this.swapiRepository.findPeopleByName(name)
     const pokemonTypes = this.evaluateSuitablePokemonService.getSuitablePokemonType(character.planet)
-    const pokemons = await Promise
-    .allSettled(pokemonTypes.map(type=>this.pokemonRepository.findByType(type)))
-    .then((results)=>{
-      const successes = results.filter(p => p.status === "fulfilled").map(p => p.value);
-      const failures = results.filter(p => p.status === "rejected").map(p => p.reason);
-      this.logger.warn(failures)
-      return successes.flat()
-    })
-    character.setPokemons(pokemons)
+    if (pokemonTypes.length > 0){
+      const pokemons = await Promise
+      .allSettled(pokemonTypes.map(type=>this.pokemonRepository.findByType(type)))
+      .then((results)=>{
+        const successes = results.filter(p => p.status === "fulfilled").map(p => p.value);
+        const failures = results.filter(p => p.status === "rejected").map(p => p.reason);
+        this.logger.warn(failures)
+        return successes.flat()
+      })
+      character.setPokemons(pokemons)
+    }else {
+      this.logger.warn(`No pokemon type was found for planet ${character.homeworldName}`)
+    }
     await this.fusionadosRepository.saveItem(character)
     return {
       birthYear:character.birthYear,

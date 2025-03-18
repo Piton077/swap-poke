@@ -1,15 +1,23 @@
 {
   "extends": "./tsconfig.json",
+
   "compilerOptions": {
+    "baseUrl": "./",
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "moduleResolution": "node10",
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],  
+    "paths": {
+      "@swapi-monorepo/shared":["../shared/src/index.ts"],
+      "@application/*": ["src/lib/application/*"],
+      "@domain/*": ["src/lib/domain/*"],
+      "@infrastructure/*": ["src/lib/infrastructure/*"],
+    },
   },
   "include": [
     "jest.config.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "test/**/*.test.ts",
+    "test/**/*.spec.ts",
+    "test/**/*.d.ts"
   ]
 }

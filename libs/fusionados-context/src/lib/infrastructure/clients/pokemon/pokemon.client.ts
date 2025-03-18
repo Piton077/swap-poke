@@ -12,10 +12,8 @@ export class PokemonClient implements PokemonRepository {
         const data = await this.httpService.request<PokemonTypeDto>({
             method:'get',
             url:`${process.env["POKEMON_API_URL"]}/type/${type}`
-        })
-        const pokemons = (data.pokemon.length > +process.env["POKEMON_UPPER_LIMIT"]!) ? data.pokemon.slice(0,+process.env["POKEMON_UPPER_LIMIT"]!) :data.pokemon
-        
-        return pokemons.map(p=> new PokemonVO(p.pokemon.name))
+        })        
+        return data.pokemon.map(p=> new PokemonVO(p.pokemon.name))
     }
 
    

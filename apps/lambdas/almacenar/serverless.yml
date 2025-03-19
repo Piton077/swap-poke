@@ -38,6 +38,7 @@ functions:
       - http:
           path: ""
           method: post
+          cors: true
           authorizer: 
             type: COGNITO_USER_POOLS
             authorizerId: ${param:authorizer}

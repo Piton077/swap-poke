@@ -1,0 +1,41 @@
+{
+  "name": "cucumber",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools/cucumber/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/tools/cucumber",
+        "main": "tools/cucumber/src/index.ts",
+        "tsConfig": "tools/cucumber/tsconfig.lib.json",
+        "assets": [
+          "tools/cucumber/*.md",
+          {
+            "input": "./tools/cucumber/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./tools/cucumber/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./tools/cucumber",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./tools/cucumber",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    }
+  }
+}

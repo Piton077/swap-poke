@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: AWS API Gateway Softtek - Rimac Challenge
+  description: |
+    Los endpoints utilizados son 
+
+    - SWAPI: https://swapi.py4e.com para caracteres
+    
+    - Pokemons: https://pokeapi.co para pokemones
+
+    El apikey se usa para controlar cuantas requests pueden ser procesadas por segundo, minuto y al dia . En este caso son 5 por segundo, 10 a modo de rafaga (en un instante), quota per day: de hasta 1000 por dia
+    
+    **Built by Jose Luis Morales Watanabe** 
+  version: 1.0.0
+servers:
+  - url: https://{api-id}.execute-api.{region}.amazonaws.com/{stage}/api/v1
+    variables:
+      api-id:
+        default: your-api-id
+      region:
+        default: us-east-1
+      stage:
+        default: dev
+paths:
+  /fusionados/{name}:
+    get:
+      tags:
+      - SWAPI - Pokemon
+      summary: Obtener un caracter de SWAPI y asignarle un pokemon dependiendo del clima de su planeta
+      description: Requiere JWT y API Key via AWS
+      parameters:
+        - name: name
+          in: path
+          description: nombre del personaje de SWAPI
+          required: true
+          example: Luke Skywalker
+          schema:
+            type: string
+      security:
+        - CognitoAuth: []
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Person"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+  /historial:
+    get:
+      tags:
+      - SWAPI - Pokemon
+      summary: Obtener el historial de los caracteres creados por /fusionados ordenados cronologicamente por fecha de creacion
+      description: Requiere JWT y API Key via AWS
+      security:
+        - CognitoAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            default: ""
+            type: string
+        - name: cursor
+          in: query
+          description: el ultimo caracter procesado que sirve como referencia para obtener la proxima pagina de caracteres
+          required: false
+          schema:
+            type: integer
+            default: ""
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/HistorialResponse"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+  /almacenar:
+    post:
+      tags:
+      - Project Backlog
+      summary: Crear una tarea de un proyecto para el backlog
+      security:
+        - CognitoAuth: []
+      requestBody:
+        description: Create nueva especie
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNewProjectBacklogRequestBody'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CreateNewProjectBacklogEntryResponse"
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    CreateNewProjectBacklogEntryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        description:
+          type: string
+          example: "Task description"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-03-17T15:30:00Z"
+        status:
+          type: string
+          example: "pending"
+        deadline:
+          type: string
+          format: date
+          example: "2025-03-18"
+      required:
+        - id
+        - description
+        - createdAt
+        - status
+        - deadline
+    CreateNewProjectBacklogRequestBody:  
+      type: object
+      properties:
+        description:
+          type: string
+          example: "crear 2 apps usando cdk"
+        deadline:
+          type: string
+          format: date
+          example: "2025-03-18"
+      required:
+        - description
+        - deadline
+    HistorialResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items: 
+            $ref: "#/components/schemas/Person"
+        cursor:
+          type: string
+          nullable: true
+    Person:
+      type: object
+      properties:
+        name:
+          type: string
+        birthYear:
+          type: string
+        eyeColor:
+          type: string
+        gender:
+          type: string
+        hairColor:
+          type: string
+        height:
+          type: string
+        mass:
+          type: string
+        skinColor:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        pokemons:
+          type: array
+          items:
+            type: string
+        planet:
+          type: string
+
+  securitySchemes:
+    CognitoAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key

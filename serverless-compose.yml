@@ -2,7 +2,13 @@
 
 services:
   api-gw:
-    path: apps/api-gateway/
+    path: apps/api-gateway
+  secure-api-gateway:
+    path: apps/secure-api
+    params: 
+      apiId: ${api-gw.apiGatewayRestApiId}
+    dependsOn:
+      - api-gw
   dbs:
     path: apps/db
   cache:
@@ -12,7 +18,7 @@ services:
     params:
       restApiId: ${api-gw.apiGatewayRestApiId}
       restApiRootResourceId: ${api-gw.apiAlmacenarParamResourceVar}
-      apikey: ${api-gw.apikey}
+      apikey: ${secure-api-gateway.apikey}
       projectTrackerTable: ${dbs.projectTrackerTable}
       authorizer: ${api-gw.apiAuthorizerArn}
     dependsOn:
@@ -23,7 +29,7 @@ services:
     params:
       restApiId: ${api-gw.apiGatewayRestApiId}
       restApiRootResourceId: ${api-gw.apiHistorialParamResourceVar}
-      apikey: ${api-gw.apikey}
+      apikey: ${secure-api-gateway.apikey}
       characterTable: ${dbs.characterTable}
       httpCache: ${cache.httpCache}
       authorizer: ${api-gw.apiAuthorizerArn}
@@ -35,10 +41,11 @@ services:
     params:
       restApiId: ${api-gw.apiGatewayRestApiId}
       restApiRootResourceId: ${api-gw.apiFusionadosParamResourceVar}
-      apikey: ${api-gw.apikey}
+      apikey: ${secure-api-gateway.apikey}
       characterTable: ${dbs.characterTable}
       authorizer: ${api-gw.apiAuthorizerArn}
       httpCache: ${cache.httpCache}
     dependsOn:
       - api-gw
       - dbs
+

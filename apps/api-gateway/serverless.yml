@@ -2,6 +2,7 @@ service: api-gw-softtek
 provider:
   name: aws
   runtime: nodejs20.x
+  stage: dev
   region: us-east-1
 resources:
   Resources:
@@ -9,36 +10,33 @@ resources:
       Type: AWS::ApiGateway::RestApi
       Properties:
         Name: api-gw-softtek
-    MyApiGWApiKey:
-      Type: AWS::ApiGateway::ApiKey
-      DependsOn: MyApiGW
+    DummyResource:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref MyApiGW
+          ParentId: !GetAtt
+            - MyApiGW
+            - RootResourceId
+          PathPart: dummy
+    DummyMethod:
+      Type: AWS::ApiGateway::Method
       Properties:
-        Name: PrivateApikey
-        Enabled: true
-        StageKeys:
-          - RestApiId: !Ref MyApiGW
-            StageName: ${sls:stage}
-    SecureUsagePlan:
-      Type: AWS::ApiGateway::UsagePlan
-      DependsOn: MyApiGWApiKey
-      Properties:
-        ApiStages:
-          - ApiId: !Ref MyApiGW
-            Stage: ${sls:stage}
-        UsagePlanName: SecureUsagePlan
-        Throttle:
-          RateLimit: 5
-          BurstLimit: 10
-        Quota:
-          Limit: 1000
-          Period: DAY
-    SecureUsagePlanKey:
-      DependsOn: SecureUsagePlan
-      Type: AWS::ApiGateway::UsagePlanKey
-      Properties:
-        KeyId: !Ref MyApiGWApiKey
-        KeyType: API_KEY
-        UsagePlanId: !Ref SecureUsagePlan
+        RestApiId: !Ref MyApiGW
+        ResourceId: !Ref DummyResource
+        HttpMethod: GET
+        AuthorizationType: NONE
+        Integration:
+          Type: MOCK
+          RequestTemplates:
+            application/json: '{ "statusCode": 200 }'
+          IntegrationResponses:
+            - StatusCode: 200
+              ResponseTemplates:
+                application/json: '{ "message": "Hello, this is a dummy response!" }'
+        MethodResponses:
+          - StatusCode: 200
+            ResponseModels:
+              application/json: "Empty"
     MyUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -77,6 +75,9 @@ resources:
           - ALLOW_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
     MyApiGatewayAuthorizer:
+      DependsOn:
+        - MyUserPool
+        - MyApiGW
       Type: AWS::ApiGateway::Authorizer
       Properties:
         Name: MyCognitoAuthorizer
@@ -88,9 +89,11 @@ resources:
         ProviderARNs:
           - Fn::GetAtt: [MyUserPool, Arn]
     CognitoUserPoolDomain:
+      DependsOn: 
+        - MyUserPool
       Type: AWS::Cognito::UserPoolDomain
       Properties:
-        Domain: softtek-challenge-oauth-v1
+        Domain: ${env:COGNITO_DOMAIN}
         UserPoolId: 
           Ref: MyUserPool
     ApiResource:
@@ -132,10 +135,11 @@ resources:
         ParentId: !Ref FusionadosResource
         PathPart: "{name}"
   Outputs:
-    apikey: 
-      Value: !Ref MyApiGWApiKey
-      Export:
-        Name: MyApiGWApiKey
+    appCognitoPoolId:
+      Value: !Ref MyUserPool
+    appClientId:
+      Value: !Ref MyUserPoolClient
+      Description: The App Client ID
     apiGatewayRestApiId:
       Value:
         Ref: MyApiGW

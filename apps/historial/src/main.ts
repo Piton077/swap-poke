@@ -10,6 +10,7 @@ let server: Handler;
 async function bootstrap(): Promise<Handler> {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(`${process.env.API_PREFIX}/${process.env.API_VERSION}`);
+  app.enableCors()
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

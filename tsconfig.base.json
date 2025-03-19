@@ -18,6 +18,7 @@
       "@swapi-monorepo/fusionados-context": [
         "libs/fusionados-context/src/index.ts"
       ],
+      "@swapi-monorepo/cucumber": ["tools/cucumber/src/index.ts"],
       "@swapi-monorepo/project-tracker-context": [
         "libs/project-tracker-context/src/index.ts"
       ],

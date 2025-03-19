@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "cucumber": {
+      "implementation": "./src/executors/executor",
+      "schema": "./src/executors/schema.json",
+      "description": "echo executor"
+    }
+  }
+}

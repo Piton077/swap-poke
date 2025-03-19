@@ -1,0 +1,54 @@
+service: secure-api-gateway
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: us-east-1
+resources:
+  Resources:
+    MyApiGWDeployment:
+      Type: AWS::ApiGateway::Deployment
+      Properties:
+        RestApiId: ${param:apiId}
+    MyApiGWStage:
+      Type: AWS::ApiGateway::Stage
+      Properties:
+        StageName: ${self:provider.stage}
+        RestApiId: ${param:apiId}
+        DeploymentId: !Ref MyApiGWDeployment
+    MyApiGWApiKey:
+      Type: AWS::ApiGateway::ApiKey
+      DependsOn:
+        - MyApiGWStage
+      Properties:
+        Name: PrivateApikey
+        Enabled: true
+        StageKeys:
+          - RestApiId: ${param:apiId}
+            StageName: ${self:provider.stage}
+    SecureUsagePlan:
+      Type: AWS::ApiGateway::UsagePlan
+      DependsOn: MyApiGWApiKey
+      Properties:
+        ApiStages:
+          - ApiId: ${param:apiId}
+            Stage: ${self:provider.stage}
+        UsagePlanName: SecureUsagePlan
+        Throttle:
+          RateLimit: 5
+          BurstLimit: 10
+        Quota:
+          Limit: 1000
+          Period: DAY
+    SecureUsagePlanKey:
+      DependsOn: SecureUsagePlan
+      Type: AWS::ApiGateway::UsagePlanKey
+      Properties:
+        KeyId: !Ref MyApiGWApiKey
+        KeyType: API_KEY
+        UsagePlanId: !Ref SecureUsagePlan
+  Outputs:
+      apikey: 
+        Value: !Ref MyApiGWApiKey
+        Export:
+          Name: MyApiGWApiKey

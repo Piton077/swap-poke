@@ -5,7 +5,7 @@ import { defineFeature, loadFeature } from 'jest-cucumber';
 import request from 'supertest';
 import { AppController } from "../src/app/app.controller";
 
-const feature = loadFeature('./features/sample.feature');
+const feature = loadFeature('./features/create-new-backlog-entry.feature');
 
 defineFeature(feature, test => {
     let app: INestApplication;
@@ -24,22 +24,35 @@ defineFeature(feature, test => {
             moduleT = module
             service = module.get<CreateProjectEntryService>(CreateProjectEntryService)
         });
-    test('Obtener SWAPI caracter con sus pokemones', ({ given, when, then }) => {
+    test('Crear un nueva tarea de proyecto', ({ given, when, then }) => {
+        let description:string
+        let deadline:string
         given('El API esta arriba', async () => {
             app = moduleT.createNestApplication();
             await app.init();
         });
-
-        when(/^busco el caracter con nombre "(.*)"$/, async (nombre) => {
-            jest.spyOn(service,"execute").mockResolvedValueOnce()
-            return request(app.getHttpServer())
-            .get('/')
-            .expect(200)
-            .expect('Hello World!');
+        when(/^creo una tarea con deadline "(.*)" y descripcion "(.*)"$/, async (deadline1,descripcion1) => {
+            deadline = deadline1
+            description = descripcion1
         });
 
-        then('la respuesta debe traer la info del registro creado', () => {
-            expect(100).toBe(200);
+        then('la respuesta debe traer la info de la tarea registrada', async () => {
+            const expected = {
+                "id": "3qPV_01nO9yxcDqNjICny",
+                "createdAt": "2025-03-19T13:17:43.042Z",
+                "deadline": deadline,
+                "description": description,
+                "status": "to_do"
+              }
+            jest.spyOn(service,"execute").mockResolvedValueOnce(expected)
+            const response = await request(app.getHttpServer())
+            .post('/almacenar')
+            .send({
+                "description":description,
+                "deadline":deadline
+            })
+            .expect(201)
+            expect(response.body).toEqual(expected);
         });
     });
     afterAll(async () => {

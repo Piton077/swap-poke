@@ -1,4 +1,4 @@
-# SwapiMonorepo
+# SOFTTEK CHALLENGE
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
@@ -6,8 +6,14 @@
 
 [Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/nest?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
-## Finish your remote caching setup
-
+## Levanta el proyecto con el wizard cli
+Necesitas tener el aws cli 2.24.5 y loggearte con usuario con permisos muy altos
+Usa nodev20
+```sh
+nvm use 20
+npm install
+npm start
+```
 [Click here to finish setting up your workspace!](https://cloud.nx.app/connect/VCAV7CRxBj)
 
 

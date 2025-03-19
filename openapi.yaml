@@ -3,13 +3,17 @@ info:
   title: AWS API Gateway Softtek - Rimac Challenge
   description: |
     Los endpoints utilizados son 
-
+    - Utiliza el wizard corriendo **npm run start** para desplegar
     - SWAPI: https://swapi.py4e.com para caracteres
     
     - Pokemons: https://pokeapi.co para pokemones
-
-    El apikey se usa para controlar cuantas requests pueden ser procesadas por segundo, minuto y al dia . En este caso son 5 por segundo, 10 a modo de rafaga (en un instante), quota per day: de hasta 1000 por dia
+    - El apikey se usa para controlar cuantas requests pueden ser procesadas por segundo, minuto y al dia . En este caso son 5 por segundo, 10 a modo de rafaga (en un instante), quota per day: de hasta 1000 por dia
     
+    **IMPORTANTE!** 
+    
+    - Carga las credenciales authorizer y apikey, el endpoint puede traer error de cors si no estan
+
+
     **Built by Jose Luis Morales Watanabe** 
   version: 1.0.0
 servers:
@@ -56,7 +60,7 @@ paths:
           description: Not found
         '500':
           description: Internal Server Error
-  /historial:
+  /fusionados/historial:
     get:
       tags:
       - SWAPI - Pokemon
@@ -68,11 +72,11 @@ paths:
       parameters:
         - name: limit
           in: query
-          description: Page number for pagination
+          description: Numero de pagina
           required: false
           schema:
             default: ""
-            type: string
+            type: integer
         - name: cursor
           in: query
           description: el ultimo caracter procesado que sirve como referencia para obtener la proxima pagina de caracteres

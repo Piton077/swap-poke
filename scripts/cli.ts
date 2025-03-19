@@ -25,7 +25,7 @@ const runRemoveDeployment = (): Promise<number> => {
 
     // Stream the standard error of the child process
     childProcess.stderr.on('data', (data) => {
-      console.error(`Deployment Error: ${data.toString()}`);
+      console.error(`Deployment: ${data.toString()}`);
     });
 
     // When the process exits, resolve or reject the Promise
@@ -50,7 +50,7 @@ const runTests = (): Promise<number> => {
 
     // Stream the standard error of the child process
     childProcess.stderr.on('data', (data) => {
-      console.error(`Deployment Error: ${data.toString()}`);
+      console.error(`Deployment: ${data.toString()}`);
     });
 
     // When the process exits, resolve or reject the Promise
